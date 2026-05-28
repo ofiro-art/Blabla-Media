@@ -136,28 +136,75 @@
   .logo-mark { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 16px rgba(201,169,110,.4); }
   .logo .em { font-style: italic; font-weight: 300; color: var(--ink-soft); }
 
-  .menu { display: flex; gap: 30px; align-items: center; }
-  .menu button.navlink {
+  .menu-desktop { display: flex; gap: 30px; align-items: center; }
+  .menu-desktop button.navlink {
     background: none; border: none; cursor: pointer; color: var(--ink-soft);
     font-family: 'Inter Tight', sans-serif; font-size: 12px; font-weight: 400;
     letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 0; position: relative;
     transition: color .3s ease;
   }
-  .menu button.navlink:hover { color: var(--ink); }
-  .menu button.navlink::after {
+  .menu-desktop button.navlink:hover { color: var(--ink); }
+  .menu-desktop button.navlink:not(.nav-cta)::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
     background: var(--accent); transform: scaleX(0); transform-origin: left;
     transition: transform .4s cubic-bezier(.7,.1,.3,1);
   }
-  .menu button.navlink:hover::after { transform: scaleX(1); }
-  .menu .nav-cta {
+  .menu-desktop button.navlink:not(.nav-cta):hover::after { transform: scaleX(1); }
+  .menu-desktop .nav-cta {
     color: var(--bg); background: var(--accent); padding: 11px 22px; border-radius: 100px;
     letter-spacing: 0.1em; transition: background .3s ease, transform .3s ease;
   }
-  .menu .nav-cta::after { display: none; }
-  .menu .nav-cta:hover { background: var(--accent-2); transform: translateY(-1px); }
+  .menu-desktop .nav-cta:hover { background: var(--accent-2); transform: translateY(-1px); }
 
-  .menu-toggle { display: none; background: none; border: none; color: var(--ink); cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+  /* animated hamburger icon */
+  .hamburger {
+    display: none; position: relative; z-index: 60;
+    width: 40px; height: 40px; padding: 0;
+    background: none; border: none; cursor: pointer;
+    flex-direction: column; justify-content: center; align-items: center; gap: 6px;
+  }
+  .hamburger span {
+    display: block; width: 26px; height: 1.5px; background: var(--ink);
+    transition: transform .35s cubic-bezier(.7,.1,.3,1), opacity .25s ease, background .3s ease;
+  }
+  .hamburger[aria-expanded="true"] span { background: var(--accent); }
+  .hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+  /* full-screen mobile drawer */
+  .mobile-menu {
+    position: fixed; inset: 0; z-index: 55;
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    padding: 110px var(--pad) 48px;
+    display: flex; flex-direction: column; gap: 36px;
+    overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-12px);
+    transition: opacity .4s ease, transform .4s ease, visibility .4s;
+  }
+  .mobile-menu.open { opacity: 1; visibility: visible; transform: none; }
+  body.menu-open { overflow: hidden; }
+  .mm-group { display: flex; flex-direction: column; gap: 4px; }
+  .mm-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute);
+    letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 12px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  .mm-link {
+    background: none; border: none; cursor: pointer; text-align: left;
+    color: var(--ink); font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: 28px; letter-spacing: -0.02em; padding: 10px 0;
+    font-variation-settings: "SOFT" 30, "opsz" 72; transition: color .3s ease, padding .3s ease;
+  }
+  .mm-link:hover, .mm-link:focus-visible { color: var(--accent); padding-left: 8px; }
+  .mm-link.sub {
+    font-size: 17px; color: var(--ink-soft);
+    font-family: 'Inter Tight', sans-serif; font-weight: 300; letter-spacing: 0.01em; padding: 8px 0;
+  }
+  .mm-link.sub:hover { color: var(--accent); }
+  .mm-cta { align-self: flex-start; margin-top: 8px; }
+
 
   /* ——— VIEW SYSTEM ——— */
   .view { display: none; }
@@ -406,6 +453,9 @@
     background: none; border: none; cursor: pointer; font-family: 'Inter Tight', sans-serif; font-weight: 300; text-align: left;
   }
   .foot-col button.flink:hover, .foot-col a:hover { color: var(--accent); }
+  .foot-address { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; }
+  .foot-address a { color: var(--ink-soft); transition: color .3s ease; }
+  .foot-address a:hover { color: var(--accent); }
   .foot-bottom { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); letter-spacing: 0.08em; text-transform: uppercase; }
 
   /* ——— FLOATING WHATSAPP ——— */
@@ -439,23 +489,24 @@
     .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
     .foot-top { flex-direction: column; gap: 32px; }
   }
+  /* show hamburger / hide desktop menu on tablet & mobile */
+  @media (max-width: 860px) {
+    .menu-desktop { display: none; }
+    .hamburger { display: flex; }
+  }
+
   @media (max-width: 600px) {
     :root { --pad: 20px; }
     section { padding: 80px 0; }
     header.hero { padding: 140px 20px 90px; }
     .scroll-cue { left: 20px; }
-    .menu { display: none; }
-    .menu.open {
-      display: flex; flex-direction: column; position: fixed; inset: 64px 0 auto 0;
-      background: var(--bg); border-bottom: 1px solid var(--line); padding: 24px var(--pad); gap: 18px; align-items: flex-start;
-    }
-    .menu.open .nav-cta { align-self: flex-start; }
-    .menu-toggle { display: block; }
     .svc-grid { grid-template-columns: 1fr; }
     .svc-cell { min-height: 220px; padding: 32px 22px 28px; }
     .gallery { grid-template-columns: repeat(2, 1fr); }
     .foot-bottom { flex-direction: column; gap: 8px; }
+    .foot-address { flex-direction: column; gap: 8px; }
     .wa-float { right: 16px; bottom: 16px; height: 54px; max-width: 54px; padding: 0 15px; }
+    .mm-link { font-size: 24px; }
   }
 </style>
 </head>
@@ -479,14 +530,40 @@
       <span class="logo-mark" aria-hidden="true"></span>
       <span>blabla<span class="em">&nbsp;media</span></span>
     </button>
-    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menu">Menu</button>
-    <div class="menu" id="menu">
-      <button class="navlink" data-view="home">Home</button>
+
+    <!-- desktop links -->
+    <div class="menu-desktop">
       <button class="navlink" data-view="about">About</button>
       <button class="navlink" data-view="home" data-scroll="services">Services</button>
       <button class="navlink" data-view="svc-motion">Work</button>
       <button class="navlink nav-cta" data-view="contact">Get in touch</button>
     </div>
+
+    <!-- hamburger icon (shows on mobile) -->
+    <button class="hamburger" id="menuToggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- full-screen mobile drawer -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <div class="mm-group">
+      <div class="mm-label">Menu</div>
+      <button class="mm-link" data-view="home">Home</button>
+      <button class="mm-link" data-view="about">About the Studio</button>
+      <button class="mm-link" data-view="home" data-scroll="services">Services</button>
+      <button class="mm-link" data-view="contact">Contact</button>
+    </div>
+    <div class="mm-group">
+      <div class="mm-label">Services</div>
+      <button class="mm-link sub" data-view="svc-brand">01 — Brand Identity</button>
+      <button class="mm-link sub" data-view="svc-motion">02 — Video &amp; Motion</button>
+      <button class="mm-link sub" data-view="svc-photo">03 — Photography</button>
+      <button class="mm-link sub" data-view="svc-illus">04 — Illustration</button>
+      <button class="mm-link sub" data-view="svc-social">05 — Social &amp; Templates</button>
+      <button class="mm-link sub" data-view="svc-print">06 — Print &amp; Large Format</button>
+    </div>
+    <button class="btn btn-primary mm-cta" data-view="contact">Start a project <span class="arr">→</span></button>
   </div>
 </nav>
 
@@ -849,19 +926,19 @@
       <div class="contact-info">
         <div class="ci-row">
           <h4>Email</h4>
-          <a href="mailto:hello@blabla.media">hello@blabla.media</a>
+          <a href="mailto:adioren1208@gmail.com">adioren1208@gmail.com</a>
         </div>
         <div class="ci-row">
           <h4>WhatsApp</h4>
-          <a href="https://wa.me/6585333020" target="_blank" rel="noopener">+65 8533 3020</a>
+          <a href="https://wa.me/6585333020?text=Hi%2C%20I%27d%20like%20to%20talk%20about%20a%20project%20with%20Blabla%20Media" target="_blank" rel="noopener">+65 8533 3020</a>
         </div>
         <div class="ci-row">
           <h4>Studio</h4>
-          <p>Singapore · Working worldwide</p>
+          <p>21 St. Thomas Walk, Grange Heights<br>Unit 22-25, Singapore 238145</p>
         </div>
         <div class="ci-row">
           <h4>Elsewhere</h4>
-          <a href="#">Instagram · Behance · Vimeo</a>
+          <a href="#">Behance · Vimeo · LinkedIn</a>
         </div>
         <div class="ci-row" style="border-bottom:none;">
           <h4>Availability</h4>
@@ -896,12 +973,16 @@
         </div>
         <div class="foot-col">
           <h4>Elsewhere</h4>
-          <a href="#">Instagram</a>
           <a href="#">Behance</a>
           <a href="#">Vimeo</a>
-          <a href="mailto:hello@blabla.media">hello@blabla.media</a>
+          <a href="#">LinkedIn</a>
+          <a href="mailto:adioren1208@gmail.com">adioren1208@gmail.com</a>
         </div>
       </div>
+    </div>
+    <div class="foot-address">
+      <span>21 St. Thomas Walk, Grange Heights, Unit 22-25, Singapore 238145</span>
+      <span><a href="https://wa.me/6585333020" target="_blank" rel="noopener">WhatsApp +65 8533 3020</a></span>
     </div>
     <div class="foot-bottom">
       <span>© 2019 — 2026 Blabla Media Studio · Singapore</span>
@@ -968,8 +1049,13 @@
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
     // close mobile menu
-    document.getElementById('menu').classList.remove('open');
-    document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
+    const mm = document.getElementById('mobile-menu');
+    mm.classList.remove('open');
+    mm.setAttribute('aria-hidden', 'true');
+    const tog = document.getElementById('menuToggle');
+    tog.setAttribute('aria-expanded', 'false');
+    tog.setAttribute('aria-label', 'Open menu');
+    document.body.classList.remove('menu-open');
   }
 
   document.addEventListener('click', (e) => {
@@ -979,12 +1065,25 @@
     showView(btn.dataset.view, btn.dataset.scroll);
   });
 
-  // ——— MOBILE MENU ———
+  // ——— MOBILE MENU (hamburger drawer) ———
   const mt = document.getElementById('menuToggle');
+  const mmenu = document.getElementById('mobile-menu');
   mt.addEventListener('click', () => {
-    const menu = document.getElementById('menu');
-    const open = menu.classList.toggle('open');
+    const open = mmenu.classList.toggle('open');
+    mmenu.setAttribute('aria-hidden', open ? 'false' : 'true');
     mt.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mt.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.classList.toggle('menu-open', open);
+  });
+  // close drawer on Escape
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mmenu.classList.contains('open')) {
+      mmenu.classList.remove('open');
+      mmenu.setAttribute('aria-hidden', 'true');
+      mt.setAttribute('aria-expanded', 'false');
+      mt.setAttribute('aria-label', 'Open menu');
+      document.body.classList.remove('menu-open');
+    }
   });
 
   // ——— NAV SCROLLED STATE ———
