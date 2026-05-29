@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- BUILD: 2026-05-29-v8 (router fix + hamburger position) -->
+<!-- BUILD: 2026-05-29-v9 (focus/inert fix — clicks now route correctly) -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <title>Blabla Media — A Creative Studio · Singapore</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A0A'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23C9A96E'/%3E%3C/svg%3E" />
 <meta name="description" content="Blabla Media is a multidisciplinary creative studio in Singapore — branding, video & motion, photography, illustration, social and large-format print." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1047,6 +1048,12 @@
   // ——— VIEW ROUTER ———
   const views = document.querySelectorAll('.view');
   function showView(id, scrollTarget) {
+    // CRITICAL: blur any focused element BEFORE hiding the menu, otherwise the browser
+    // blocks the action because aria-hidden cannot contain a focused descendant.
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
+
     views.forEach(v => v.classList.remove('active'));
     const el = document.getElementById('view-' + id);
     (el || document.getElementById('view-home')).classList.add('active');
@@ -1067,14 +1074,19 @@
     } else {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
-    // close mobile menu
+    // close mobile menu if it's open (now safe — we already blurred focus above)
     const mm = document.getElementById('mobile-menu');
-    mm.classList.remove('open');
-    mm.setAttribute('aria-hidden', 'true');
-    const tog = document.getElementById('menuToggle');
-    tog.setAttribute('aria-expanded', 'false');
-    tog.setAttribute('aria-label', 'Open menu');
-    document.body.classList.remove('menu-open');
+    if (mm && mm.classList.contains('open')) {
+      mm.classList.remove('open');
+      mm.setAttribute('aria-hidden', 'true');
+      mm.setAttribute('inert', '');
+      const tog = document.getElementById('menuToggle');
+      if (tog) {
+        tog.setAttribute('aria-expanded', 'false');
+        tog.setAttribute('aria-label', 'Open menu');
+      }
+      document.body.classList.remove('menu-open');
+    }
   }
 
   document.addEventListener('click', (e) => {
@@ -1089,19 +1101,30 @@
   const mmenu = document.getElementById('mobile-menu');
   const mclose = document.getElementById('menuClose');
 
+  // start with menu inert so it can't trap focus when closed
+  if (mmenu) mmenu.setAttribute('inert', '');
+
   function openMenu() {
     mmenu.classList.add('open');
     mmenu.setAttribute('aria-hidden', 'false');
+    mmenu.removeAttribute('inert');
     mt.setAttribute('aria-expanded', 'true');
     mt.setAttribute('aria-label', 'Close menu');
     document.body.classList.add('menu-open');
   }
   function closeMenu() {
+    // blur any focused descendant first, so aria-hidden/inert can be applied safely
+    if (document.activeElement && mmenu.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
     mmenu.classList.remove('open');
     mmenu.setAttribute('aria-hidden', 'true');
+    mmenu.setAttribute('inert', '');
     mt.setAttribute('aria-expanded', 'false');
     mt.setAttribute('aria-label', 'Open menu');
     document.body.classList.remove('menu-open');
+    // return focus to the hamburger toggle for keyboard users
+    try { mt.focus({ preventScroll: true }); } catch(e) {}
   }
   mt.addEventListener('click', () => {
     mmenu.classList.contains('open') ? closeMenu() : openMenu();
