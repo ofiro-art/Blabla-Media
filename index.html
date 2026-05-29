@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- BUILD: 2026-05-29-v11 (sub-page header redesigned — content now visible immediately, no empty banner) -->
+<!-- BUILD: 2026-05-29-v12 (CRITICAL CSS PARSE FIX — orphan rule was breaking .view {display:none}, causing all pages to render on top of each other) -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -222,11 +222,6 @@
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu.open .mm-link { animation: none; opacity: 1; transform: none; }
   }
-
-
-    .mobile-menu.open .mm-link { animation: none; opacity: 1; transform: none; }
-  }
-
 
   /* ——— VIEW SYSTEM ——— */
   .view { display: none; }
