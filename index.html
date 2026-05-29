@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- BUILD: 2026-05-29-v8 (router fix + hamburger position) -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Blabla Media — A Creative Studio · Singapore</title>
 <meta name="description" content="Blabla Media is a multidisciplinary creative studio in Singapore — branding, video & motion, photography, illustration, social and large-format print." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -124,7 +128,7 @@
   }
   nav.top.scrolled { border-bottom-color: var(--line); }
   .nav-inner {
-    max-width: var(--maxw); margin: 0 auto; padding: 18px var(--pad);
+    width: 100%; padding: 18px clamp(20px, 3vw, 40px);
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
   .logo {
@@ -152,38 +156,75 @@
   .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
   .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-  /* full-screen mobile drawer */
+  /* ——— FULL-SCREEN MENU (Adi Oren style) ——— */
   .mobile-menu {
-    position: fixed; inset: 0; z-index: 55;
-    background: rgba(10,10,10,0.97);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    padding: 110px var(--pad) 48px;
-    display: flex; flex-direction: column; gap: 36px;
-    overflow-y: auto;
-    opacity: 0; visibility: hidden; transform: translateY(-12px);
-    transition: opacity .4s ease, transform .4s ease, visibility .4s;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,10,10,0.985);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px 24px;
+    opacity: 0; visibility: hidden;
+    transition: opacity .5s ease, visibility .5s;
   }
-  .mobile-menu.open { opacity: 1; visibility: visible; transform: none; }
+  .mobile-menu.open { opacity: 1; visibility: visible; }
   body.menu-open { overflow: hidden; }
-  .mm-group { display: flex; flex-direction: column; gap: 4px; }
-  .mm-label {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute);
-    letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 12px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+
+  /* faint champagne glow behind the menu */
+  .mobile-menu::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.08), transparent 65%);
+  }
+
+  /* dedicated close (X) inside the overlay — always visible top-right */
+  .mm-close {
+    position: absolute; top: 22px; right: 32px; z-index: 5;
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    background: none; border: none; cursor: pointer;
+    color: var(--ink); transition: color .3s ease, transform .3s ease;
+  }
+  .mm-close:hover, .mm-close:focus-visible { color: var(--accent); transform: rotate(90deg); }
+
+  .mm-list {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; width: 100%; max-width: 720px;
   }
   .mm-link {
-    background: none; border: none; cursor: pointer; text-align: left;
-    color: var(--ink); font-family: 'Fraunces', serif; font-weight: 300;
-    font-size: 28px; letter-spacing: -0.02em; padding: 10px 0;
-    font-variation-settings: "SOFT" 30, "opsz" 72; transition: color .3s ease, padding .3s ease;
+    background: none; border: none; cursor: pointer; text-align: center;
+    color: var(--ink-soft);
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(24px, 3.4vw, 38px); line-height: 1.35;
+    letter-spacing: 0.005em; padding: 6px 12px;
+    font-variation-settings: "SOFT" 30, "opsz" 96;
+    transition: color .35s ease, letter-spacing .35s ease;
+    opacity: 0; transform: translateY(12px);
   }
-  .mm-link:hover, .mm-link:focus-visible { color: var(--accent); padding-left: 8px; }
-  .mm-link.sub {
-    font-size: 17px; color: var(--ink-soft);
-    font-family: 'Inter Tight', sans-serif; font-weight: 300; letter-spacing: 0.01em; padding: 8px 0;
+  .mm-link:hover, .mm-link:focus-visible {
+    color: var(--accent); letter-spacing: 0.04em;
   }
-  .mm-link.sub:hover { color: var(--accent); }
-  .mm-cta { align-self: flex-start; margin-top: 8px; }
+  /* staggered reveal when menu opens */
+  .mobile-menu.open .mm-link {
+    animation: mmIn .55s cubic-bezier(.2,.6,.2,1) forwards;
+  }
+  .mobile-menu.open .mm-link:nth-child(1) { animation-delay: .12s; }
+  .mobile-menu.open .mm-link:nth-child(2) { animation-delay: .17s; }
+  .mobile-menu.open .mm-link:nth-child(3) { animation-delay: .22s; }
+  .mobile-menu.open .mm-link:nth-child(4) { animation-delay: .27s; }
+  .mobile-menu.open .mm-link:nth-child(5) { animation-delay: .32s; }
+  .mobile-menu.open .mm-link:nth-child(6) { animation-delay: .37s; }
+  .mobile-menu.open .mm-link:nth-child(7) { animation-delay: .42s; }
+  .mobile-menu.open .mm-link:nth-child(8) { animation-delay: .47s; }
+  .mobile-menu.open .mm-link:nth-child(9) { animation-delay: .52s; }
+  @keyframes mmIn { to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu.open .mm-link { animation: none; opacity: 1; transform: none; }
+  }
+
+
+    .mobile-menu.open .mm-link { animation: none; opacity: 1; transform: none; }
+  }
 
 
   /* ——— VIEW SYSTEM ——— */
@@ -480,7 +521,6 @@
     .foot-bottom { flex-direction: column; gap: 8px; }
     .foot-address { flex-direction: column; gap: 8px; }
     .wa-float { right: 16px; bottom: 16px; height: 54px; max-width: 54px; padding: 0 15px; }
-    .mm-link { font-size: 24px; }
   }
 </style>
 </head>
@@ -510,28 +550,27 @@
       <span></span><span></span><span></span>
     </button>
   </div>
-
-  <!-- full-screen mobile drawer -->
-  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <div class="mm-group">
-      <div class="mm-label">Menu</div>
-      <button class="mm-link" data-view="home">Home</button>
-      <button class="mm-link" data-view="about">About the Studio</button>
-      <button class="mm-link" data-view="home" data-scroll="services">Services</button>
-      <button class="mm-link" data-view="contact">Contact</button>
-    </div>
-    <div class="mm-group">
-      <div class="mm-label">Services</div>
-      <button class="mm-link sub" data-view="svc-brand">01 — Brand Identity</button>
-      <button class="mm-link sub" data-view="svc-motion">02 — Video &amp; Motion</button>
-      <button class="mm-link sub" data-view="svc-photo">03 — Photography</button>
-      <button class="mm-link sub" data-view="svc-illus">04 — Illustration</button>
-      <button class="mm-link sub" data-view="svc-social">05 — Social &amp; Templates</button>
-      <button class="mm-link sub" data-view="svc-print">06 — Print &amp; Large Format</button>
-    </div>
-    <button class="btn btn-primary mm-cta" data-view="contact">Start a project <span class="arr">→</span></button>
-  </div>
 </nav>
+
+<!-- ——— FULL-SCREEN MENU OVERLAY (sibling of nav, not child — so fixed positioning truly covers viewport) ——— -->
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Site menu">
+  <button class="mm-close" id="menuClose" aria-label="Close menu" type="button">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+      <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M5 5l14 14M19 5L5 19"/>
+    </svg>
+  </button>
+  <nav class="mm-list" aria-label="Menu">
+    <button class="mm-link" data-view="home">Home</button>
+    <button class="mm-link" data-view="about">About the Studio</button>
+    <button class="mm-link" data-view="svc-brand">Brand Identity</button>
+    <button class="mm-link" data-view="svc-motion">Video &amp; Motion</button>
+    <button class="mm-link" data-view="svc-photo">Photography</button>
+    <button class="mm-link" data-view="svc-illus">Illustration</button>
+    <button class="mm-link" data-view="svc-social">Social &amp; Templates</button>
+    <button class="mm-link" data-view="svc-print">Print &amp; Large Format</button>
+    <button class="mm-link" data-view="contact">Contact</button>
+  </nav>
+</div>
 
 <main id="main">
 
@@ -969,31 +1008,41 @@
 
 <script>
   // ——— INTRO / SPLASH (once per browser session) ———
+  // In its own script tag so any failure here cannot kill the rest of the JS.
   (function () {
-    const intro = document.getElementById('intro');
-    if (!intro) return;
-    const seen = sessionStorage.getItem('blabla_intro_seen');
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try {
+      const intro = document.getElementById('intro');
+      if (!intro) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let seen = null;
+      try { seen = sessionStorage.getItem('blabla_intro_seen'); } catch (e) { /* storage blocked — show intro anyway */ }
 
-    if (seen) {
-      // already shown this session — remove instantly
-      intro.remove();
-      return;
-    }
+      if (seen) {
+        intro.remove();
+        return;
+      }
 
-    document.body.classList.add('intro-lock');
-    const hold = reduce ? 900 : 2600;   // total time the splash stays up
-    const dismiss = () => {
-      intro.classList.add('done');
+      document.body.classList.add('intro-lock');
+      const hold = reduce ? 900 : 2600;
+      const dismiss = () => {
+        intro.classList.add('done');
+        document.body.classList.remove('intro-lock');
+        try { sessionStorage.setItem('blabla_intro_seen', '1'); } catch (e) {}
+        setTimeout(() => intro.remove(), 1100);
+      };
+      const timer = setTimeout(dismiss, hold);
+      intro.addEventListener('click', () => { clearTimeout(timer); dismiss(); });
+      window.addEventListener('keydown', function onKey() { clearTimeout(timer); dismiss(); window.removeEventListener('keydown', onKey); }, { once: true });
+    } catch (e) {
+      // If anything in intro fails, just hide it so it can't block the site
+      const intro = document.getElementById('intro');
+      if (intro) intro.remove();
       document.body.classList.remove('intro-lock');
-      sessionStorage.setItem('blabla_intro_seen', '1');
-      setTimeout(() => intro.remove(), 1100);
-    };
-    const timer = setTimeout(dismiss, hold);
-    // allow skipping by click / key / scroll
-    intro.addEventListener('click', () => { clearTimeout(timer); dismiss(); });
-    window.addEventListener('keydown', function onKey() { clearTimeout(timer); dismiss(); window.removeEventListener('keydown', onKey); }, { once: true });
+    }
   })();
+</script>
+
+<script>
 
   // ——— VIEW ROUTER ———
   const views = document.querySelectorAll('.view');
@@ -1004,7 +1053,11 @@
 
     // re-arm reveals inside the now-visible view
     const active = el || document.getElementById('view-home');
-    active.querySelectorAll('.reveal').forEach(r => { r.classList.remove('in'); io.observe(r); });
+    active.querySelectorAll('.reveal').forEach(r => {
+      r.classList.remove('in');
+      if (typeof io !== 'undefined' && io) io.observe(r);
+      else r.classList.add('in');
+    });
 
     if (scrollTarget) {
       requestAnimationFrame(() => {
@@ -1034,33 +1087,46 @@
   // ——— MOBILE MENU (hamburger drawer) ———
   const mt = document.getElementById('menuToggle');
   const mmenu = document.getElementById('mobile-menu');
+  const mclose = document.getElementById('menuClose');
+
+  function openMenu() {
+    mmenu.classList.add('open');
+    mmenu.setAttribute('aria-hidden', 'false');
+    mt.setAttribute('aria-expanded', 'true');
+    mt.setAttribute('aria-label', 'Close menu');
+    document.body.classList.add('menu-open');
+  }
+  function closeMenu() {
+    mmenu.classList.remove('open');
+    mmenu.setAttribute('aria-hidden', 'true');
+    mt.setAttribute('aria-expanded', 'false');
+    mt.setAttribute('aria-label', 'Open menu');
+    document.body.classList.remove('menu-open');
+  }
   mt.addEventListener('click', () => {
-    const open = mmenu.classList.toggle('open');
-    mmenu.setAttribute('aria-hidden', open ? 'false' : 'true');
-    mt.setAttribute('aria-expanded', open ? 'true' : 'false');
-    mt.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    document.body.classList.toggle('menu-open', open);
+    mmenu.classList.contains('open') ? closeMenu() : openMenu();
   });
-  // close drawer on Escape
+  if (mclose) mclose.addEventListener('click', closeMenu);
+  // close on Escape
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mmenu.classList.contains('open')) {
-      mmenu.classList.remove('open');
-      mmenu.setAttribute('aria-hidden', 'true');
-      mt.setAttribute('aria-expanded', 'false');
-      mt.setAttribute('aria-label', 'Open menu');
-      document.body.classList.remove('menu-open');
-    }
+    if (e.key === 'Escape' && mmenu.classList.contains('open')) closeMenu();
   });
 
   // ——— NAV SCROLLED STATE ———
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-  // ——— REVEAL OBSERVER ———
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, { threshold: 0.14 });
-  document.querySelectorAll('.view.active .reveal').forEach(el => io.observe(el));
+  // ——— REVEAL OBSERVER (defensive: no-op if IntersectionObserver unavailable) ———
+  let io;
+  if (typeof IntersectionObserver !== 'undefined') {
+    io = new IntersectionObserver((entries) => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.14 });
+    document.querySelectorAll('.view.active .reveal').forEach(el => io.observe(el));
+  } else {
+    // fallback: just show everything immediately
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
 </script>
 
 </body>
