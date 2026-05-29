@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- BUILD: 2026-05-29-v9 (focus/inert fix — clicks now route correctly) -->
+<!-- BUILD: 2026-05-29-v11 (sub-page header redesigned — content now visible immediately, no empty banner) -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -349,9 +349,9 @@
   .svc-cta h3 { color: var(--accent); font-style: italic; font-variation-settings: "SOFT" 100, "opsz" 72; }
 
   /* ——— SUBPAGE (service / about / courses) ——— */
-  .subpage { padding-top: 140px; min-height: 100vh; }
+  .subpage { padding-top: 110px; min-height: 100vh; }
   .back-btn {
-    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 48px;
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 32px;
     background: none; border: 1px solid var(--line); border-radius: 100px; cursor: pointer;
     color: var(--ink-soft); padding: 10px 20px; font-family: 'JetBrains Mono', monospace;
     font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; transition: border-color .3s ease, color .3s ease;
@@ -359,26 +359,27 @@
   .back-btn:hover { border-color: var(--accent); color: var(--accent); }
   .back-btn .a { font-family: 'Fraunces', serif; font-style: italic; }
 
+  /* compact, integrated page header — no giant empty banner */
   .sub-banner {
-    position: relative; border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
-    aspect-ratio: 21/8; display: grid; place-items: center; text-align: center;
-    background: linear-gradient(140deg, var(--bg-soft) 0%, var(--bg) 100%); margin-bottom: 64px;
+    position: relative; padding: 8px 0 28px; margin-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sub-banner .b-tag {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 18px;
   }
   .sub-banner .b-word {
     font-family: 'Fraunces', serif; font-weight: 200; font-style: italic;
-    font-size: clamp(40px, 7vw, 120px); line-height: 0.95; letter-spacing: -0.03em;
-    font-variation-settings: "SOFT" 100, "opsz" 144; color: var(--ink); padding: 24px;
+    font-size: clamp(40px, 6.5vw, 96px); line-height: 1; letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 100, "opsz" 144; color: var(--ink);
   }
   .sub-banner .b-word .em { color: var(--accent); }
-  .sub-banner .b-tag {
-    position: absolute; top: 24px; left: 28px; font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
-  }
 
-  .sub-head { display: grid; grid-template-columns: 1fr 1.3fr; gap: 64px; align-items: start; margin-bottom: 72px; }
+  .sub-head { display: grid; grid-template-columns: 1fr 1.3fr; gap: 64px; align-items: start; margin-bottom: 64px; }
   .sub-head h1 {
-    font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(36px, 4.4vw, 64px);
-    line-height: 1.02; letter-spacing: -0.03em; font-variation-settings: "SOFT" 50, "opsz" 144; color: var(--ink);
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(30px, 3.4vw, 48px);
+    line-height: 1.08; letter-spacing: -0.02em; font-variation-settings: "SOFT" 50, "opsz" 144; color: var(--ink);
   }
   .sub-head h1 .em { font-style: italic; font-weight: 200; color: var(--accent); font-variation-settings: "SOFT" 100, "opsz" 144; }
   .sub-lead { font-size: 17px; line-height: 1.75; color: var(--ink-soft); font-weight: 300; }
